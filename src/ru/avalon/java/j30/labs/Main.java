@@ -1,27 +1,17 @@
 package ru.avalon.java.j30.labs;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Properties;
 
-/**
- * Лабораторная работа №3
- * <p>
- * Курс: "DEV-OCPJP. Подготовка к сдаче сертификационных экзаменов серии Oracle Certified Professional Java Programmer"
- * <p>
- * Тема: "JDBC - Java Database Connectivity" 
- *
- * @author Daniel Alpatov <danial.alpatov@gmail.com>
- */
 public class Main {
 
-    /**
-     * Точка входа в приложение
-     * 
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, IOException {
         /*
          * TODO #01 Подключите к проекту все библиотеки, необходимые для соединения с СУБД.
          */
@@ -55,11 +45,11 @@ public class Main {
      * 
      * @return URL в виде объекта класса {@link String}
      */
-    private static String getUrl() {
+    private static String getUrl() throws IOException {
         /*
          * TODO #02 Реализуйте метод getUrl
          */
-        throw new UnsupportedOperationException("Not implemented yet!");
+        return getProperties().getProperty("url");
     }
     /**
      * Возвращает параметры соединения
@@ -67,11 +57,21 @@ public class Main {
      * @return Объект класса {@link Properties}, содержащий параметры user и 
      * password
      */
-    private static Properties getProperties() {
+    private static Properties getProperties() throws IOException {
         /*
          * TODO #03 Реализуйте метод getProperties
          */
-        throw new UnsupportedOperationException("Not implemented yet!");
+        String propPath = System.getProperty("user.dir") + 
+                "\\src\\ru\\avalon\\java\\j30\\labs\\resources\\database.properties";
+        // пришлось так интерпритировать пути из-за корпоративной операционки
+        // французкая Windows + MUI
+        
+        Properties info = new Properties();
+        try (InputStream is = new FileInputStream(
+                propPath)) {
+            info.load(is);
+        }
+        return info;
     }
     /**
      * Возвращает соединение с базой данных Sample
@@ -79,11 +79,11 @@ public class Main {
      * @return объект типа {@link Connection}
      * @throws SQLException 
      */
-    private static Connection getConnection() throws SQLException {
+    private static Connection getConnection() throws SQLException, IOException {
         /*
          * TODO #04 Реализуйте метод getConnection
          */
-        throw new UnsupportedOperationException("Not implemented yet!");
+        return DriverManager.getConnection(getUrl(), getProperties());
     }
     
 }
