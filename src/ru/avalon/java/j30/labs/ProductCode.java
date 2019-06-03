@@ -43,11 +43,15 @@ public class ProductCode {
      * @param set {@link ResultSet}, полученный в результате запроса, 
      * содержащего все поля таблицы PRODUCT_CODE базы данных Sample.
      */
-    private ProductCode(ResultSet set) {
+    private ProductCode(ResultSet set) throws SQLException {
         /*
          * TODO #05 реализуйте конструктор класса ProductCode
          */
-        throw new UnsupportedOperationException("Not implemented yet!");        
+        while (set.next()) {
+                code = set.getString("prod_code");
+                discountCode = set.getString("discount_code").charAt(0);
+                description = set.getString("description");
+            }        
     }
     /**
      * Возвращает код товара
