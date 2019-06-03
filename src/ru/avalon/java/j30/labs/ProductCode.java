@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * Класс описывает представление о коде товара и отражает соответствующую 
@@ -112,7 +113,7 @@ public class ProductCode {
         /*
          * TODO #06 Реализуйте метод hashCode
          */
-        throw new UnsupportedOperationException("Not implemented yet!");
+        return code.hashCode() + description.hashCode();
     }
     /**
      * Сравнивает некоторый произвольный объект с текущим объектом типа 
@@ -127,7 +128,10 @@ public class ProductCode {
         /*
          * TODO #07 Реализуйте метод equals
          */
-        throw new UnsupportedOperationException("Not implemented yet!");
+        if (obj instanceof ProductCode) {
+            return code.equals(((ProductCode) obj).code);
+        }
+        return false;
     }
     /**
      * Возвращает строковое представление кода товара.
@@ -139,7 +143,9 @@ public class ProductCode {
         /*
          * TODO #08 Реализуйте метод toString
          */
-        throw new UnsupportedOperationException("Not implemented yet!");
+        return "Product " + description 
+                + " with code " + code 
+                + " has discount " + discountCode;
     }
     /**
      * Возвращает запрос на выбор всех записей из таблицы PRODUCT_CODE 
@@ -152,7 +158,12 @@ public class ProductCode {
         /*
          * TODO #09 Реализуйте метод getSelectQuery
          */
-        throw new UnsupportedOperationException("Not implemented yet!");
+        if (connection != null) {
+            String selectQuery = "SELECT * FROM product_code";
+            return connection.prepareStatement(selectQuery);
+        } else {
+            return null;
+        }
     }
     /**
      * Возвращает запрос на добавление записи в таблицу PRODUCT_CODE 
@@ -165,7 +176,13 @@ public class ProductCode {
         /*
          * TODO #10 Реализуйте метод getInsertQuery
          */
-        throw new UnsupportedOperationException("Not implemented yet!");
+        if (connection != null) {
+            String insertQuery = "INSERT INTO product_code "
+                    + "VALUES (?,?,?)";
+            return connection.prepareStatement(insertQuery);
+        } else {
+            return null;
+        }
     }
     /**
      * Возвращает запрос на обновление значений записи в таблице PRODUCT_CODE 
@@ -178,7 +195,14 @@ public class ProductCode {
         /*
          * TODO #11 Реализуйте метод getUpdateQuery
          */
-        throw new UnsupportedOperationException("Not implemented yet!");
+        if (connection != null) {
+            String updateQuery = "UPDATE APP.product_code "
+                    + "SET discount_code = ?, description = ? "
+                    + "WHERE prod_code = ?";
+            return connection.prepareStatement(updateQuery);
+        } else {
+            return null;
+        }
     }
     /**
      * Преобразует {@link ResultSet} в коллекцию объектов типа {@link ProductCode}
@@ -192,7 +216,13 @@ public class ProductCode {
         /*
          * TODO #12 Реализуйте метод convert
          */
-        throw new UnsupportedOperationException("Not implemented yet!");
+        Collection<ProductCode> productList = new HashSet<>();
+        if (set != null) {
+            while (set.next()) {
+                productList.add(new ProductCode(set));
+            }
+        }
+        return productList;
     }
     /**
      * Сохраняет текущий объект в базе данных. 
@@ -205,9 +235,22 @@ public class ProductCode {
      */
     public void save(Connection connection) throws SQLException {
         /*
-         * TODO #13 Реализуйте метод convert
+         * TODO #13 Реализуйте метод save
          */
-        throw new UnsupportedOperationException("Not implemented yet!");
+       Collection<ProductCode> products = all(connection);
+        PreparedStatement statement;
+        if (products.contains(this)) {
+            statement = getUpdateQuery(connection);
+            statement.setString(4, code);
+        } else {
+            statement = getInsertQuery(connection);
+        }
+        statement.setString(1, code);
+        statement.setString(2, String.valueOf(discountCode));
+        statement.setString(3, description);
+        statement.execute();
+
+        
     }
     /**
      * Возвращает все записи таблицы PRODUCT_CODE в виде коллекции объектов
