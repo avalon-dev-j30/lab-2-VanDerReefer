@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -17,6 +18,10 @@ public class Main {
          */
         try (Connection connection = getConnection()) {
             ProductCode code = new ProductCode("MO", 'N', "Movies");
+            Collection<ProductCode> arrayList = (ArrayList<ProductCode>) 
+                                                ProductCode.all(connection);
+
+            arrayList = ProductCode.all(connection);
             code.save(connection);
             printAllCodes(connection);
 
